@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TennisTrack">
+<meta name="theme-color" content="#15803D">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>TennisTrack 15/16 — Leny</title>
+<style>
+:root{
+  --bg:#F2F2F7;--card:#FFFFFF;--text:#111827;--muted:#6B7280;--border:#E5E7EB;
+  --green:#15803D;--green-dark:#14532D;--green-soft:#DCFCE7;
+  --blue:#007AFF;--blue-soft:#EFF6FF;--amber:#D97706;--amber-soft:#FEF3C7;
+  --purple:#6D28D9;--purple-soft:#EDE9FE;
+  --red:#DC2626;--red-soft:#FEE2E2;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{
+  margin:0;padding:0;width:100%;min-height:100dvh;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  font-size:14px;line-height:1.45;overscroll-behavior-y:none;
+}
+#app{width:100%;max-width:100%;min-height:100dvh;display:flex;flex-direction:column;}
+header{
+  position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:calc(10px + var(--sat)) 16px 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.brand{display:flex;align-items:center;gap:8px;}
+.brand h1{margin:0;font-size:18px;font-weight:800;letter-spacing:-0.3px;}
+.pill-rank{
+  background:var(--green-soft);color:var(--green-dark);font-weight:700;
+  font-size:12px;padding:4px 10px;border-radius:999px;
+}
+.hdr-actions{display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+}
+main{flex:1;width:100%;padding:14px 14px calc(86px + var(--sab));}
+.card{
+  background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;
+  border:1px solid rgba(0,0,0,.05);box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.hero{
+  background:linear-gradient(135deg,#15803D 0%,#166534 100%);
+  color:#fff;border-radius:18px;padding:16px;margin-bottom:12px;
+  box-shadow:0 6px 18px rgba(21,128,61,.22);
+}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;}
+.hero-chip{background:rgba(255,255,255,.18);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;}
+.hero-chip-white{background:#fff;color:var(--green-dark);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;}
+.hero-pts{font-size:32px;font-weight:800;letter-spacing:-0.8px;line-height:1.1;}
+.hero-pts span{font-size:15px;font-weight:600;opacity:.85;}
+.hero-sub{font-size:12px;opacity:.9;margin:6px 0 10px;}
+.prog-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:6px;}
+.prog-bar{height:10px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,#BEF264,#FACC15);border-radius:999px;transition:width .4s ease;}
+.hero-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:12px;opacity:.92;}
+.btn-ghost-white{
+  background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:10px;
+  padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;
+}
+.sync-bar{
+  background:var(--blue-soft);border:1px solid #BFDBFE;border-radius:14px;
+  padding:11px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.sync-bar.new{background:var(--green-soft);border-color:#86EFAC;}
+.sync-title{font-weight:800;color:#1E3A8A;font-size:13px;}
+.sync-bar.new .sync-title{color:var(--green-dark);}
+.sync-sub{font-size:11px;color:#1E40AF;margin-top:2px;}
+.sync-bar.new .sync-sub{color:var(--green-dark);}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.kpi{background:#fff;border-radius:14px;padding:10px 6px;text-align:center;border:1px solid rgba(0,0,0,.05);}
+.kpi-val{font-size:18px;font-weight:800;}
+.kpi-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+.btn{
+  border:none;border-radius:11px;padding:9px 12px;font-size:13px;font-weight:700;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-soft{background:#F3F4F6;color:var(--text);}
+.btn-red{background:var(--red-soft);color:var(--red);}
+.btn-sm{padding:6px 10px;font-size:12px;border-radius:9px;}
+.btn-block{width:100%;}
+.sec-title{font-size:15px;font-weight:800;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;}
+.pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;-webkit-overflow-scrolling:touch;}
+.pills::-webkit-scrollbar{display:none;}
+.pill{
+  white-space:nowrap;border:1px solid var(--border);background:#fff;color:var(--text);
+  border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;
+}
+.pill.active{background:var(--green);color:#fff;border-color:var(--green);}
+.filters{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px;}
+select,input,textarea{
+  font-family:inherit;font-size:16px;border:1px solid var(--border);border-radius:10px;
+  padding:8px 10px;background:#fff;color:var(--text);
+}
+.filters select{font-size:13px;padding:7px 8px;width:100%;}
+.t-card{
+  background:#fff;border-radius:15px;padding:13px;margin-bottom:10px;
+  border:1px solid rgba(0,0,0,.06);
+}
+.t-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.t-name{font-size:15px;font-weight:800;margin:0;}
+.t-club{font-size:12px;color:var(--muted);margin-top:2px;}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:#F3F4F6;color:#374151;}
+.badge-tmc{background:#FEF3C7;color:#92400E;}
+.badge-green{background:var(--green-soft);color:var(--green-dark);}
+.badge-blue{background:var(--blue-soft);color:#1D4ED8;}
+.badge-purple{background:var(--purple-soft);color:var(--purple);}
+.badge-red{background:var(--red-soft);color:var(--red);}
+.t-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.overlap{background:#FFF7ED;border:1px solid #FDBA74;color:#9A3412;font-size:12px;padding:6px 9px;border-radius:9px;margin-top:8px;font-weight:600;}
+.match-row{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.match-row:last-child{border-bottom:none;}
+.res-dot{
+  width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;flex-shrink:0;
+}
+.res-v{background:var(--green-soft);color:var(--green-dark);}
+.res-d{background:var(--red-soft);color:var(--red);}
+nav.tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);
+  padding:6px 4px calc(8px + var(--sab));
+  display:grid;grid-template-columns:repeat(4,1fr);
+}
+.tab-btn{
+  background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;position:relative;padding:4px 0;
+}
+.tab-btn.active{color:var(--green);}
+.tab-ico{font-size:19px;line-height:1;}
+.tab-badge{
+  position:absolute;top:0;right:calc(50% - 22px);background:var(--green);color:#fff;
+  font-size:10px;font-weight:800;padding:1px 5px;border-radius:999px;
+}
+.modal-bg{
+  position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.45);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.modal-bg.open{display:flex;}
+.sheet{
+  width:100%;max-height:90dvh;overflow-y:auto;background:#fff;
+  border-radius:20px 20px 0 0;padding:16px 16px calc(20px + var(--sab));
+}
+.sheet-handle{width:38px;height:4px;background:#D1D5DB;border-radius:999px;margin:0 auto 12px;}
+.field{margin-bottom:10px;}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+.field input,.field select,.field textarea{width:100%;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.toast{
+  position:fixed;top:calc(62px + var(--sat));left:50%;transform:translateX(-50%);
+  background:#111827;color:#fff;padding:9px 14px;border-radius:999px;font-size:13px;
+  font-weight:700;z-index:100;display:none;box-shadow:0 8px 20px rgba(0,0,0,.22);white-space:nowrap;
+}
+.toast.show{display:block;}
+.sim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:120;overflow:hidden;}
+.empty{text-align:center;color:var(--muted);padding:24px 12px;font-size:13px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <h1>TennisTrack</h1>
+      <span class="pill-rank" id="hdr-rank">Leny • 30</span>
+    </div>
+    <div class="hdr-actions">
+      <button class="icon-btn" onclick="syncRemote(true)" title="Synchroniser le robot">🔄</button>
+      <button class="icon-btn" onclick="openSettingsModal()" title="Paramètres">⚙️</button>
+    </div>
+  </header>
+
+  <main id="view"></main>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="home" onclick="setTab('home')">
+      <span class="tab-ico">🏠</span><span>Accueil</span>
+    </button>
+    <button class="tab-btn" data-tab="tournois" onclick="setTab('tournois')">
+      <span class="tab-ico">🏆</span><span>Tournois</span><span class="tab-badge" id="badge-t">0</span>
+    </button>
+    <button class="tab-btn" data-tab="convocs" onclick="setTab('convocs')">
+      <span class="tab-ico">📅</span><span>Convocations</span><span class="tab-badge" id="badge-c" style="display:none">0</span>
+    </button>
+    <button class="tab-btn" data-tab="palmares" onclick="setTab('palmares')">
+      <span class="tab-ico">📊</span><span>Palmarès</span>
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+const STORAGE_KEY = 'tennistrack_leny_auto_v3';
+const RANKS = ['NC','40','30/5','30/4','30/3','30/2','30/1','30','15/5','15/4','15/3','15/2','15/1','15'];
+const TARGETS = {'30':{next:'15/5',pts:305,maintien:285},'15/5':{next:'15/4',pts:315,maintien:305},'15/4':{next:'15/3',pts:325,maintien:315},'15/3':{next:'15/2',pts:340,maintien:325},'15/2':{next:'15/1',pts:360,maintien:340}};
+
+const CITIES_MIN = {
+  'clamart':5,'châtillon':7,'chatillon':7,'meudon':8,'fontenay-aux-roses':8,'plessis-robinson':9,'le plessis-robinson':9,
+  'vanves':10,'issy-les-moulineaux':10,'malakoff':10,'sceaux':11,'bagneux':12,'châtenay-malabry':12,'chatenay-malabry':12,
+  'bourg-la-reine':13,'montrouge':13,'antony':14,'vélizy':14,'velizy':14,'boulogne-billancourt':15,'sèvres':15,'sevres':15,
+  'chaville':15,'cachan':16,'arcueil':16,'l\'haÿ-les-roses':17,'haÿ-les-roses':17,'fresnes':17,'villejuif':18,'viroflay':18,
+  'versailles':20,'saint-cloud':20,'athis-mons':22,'garches':22,'rueil-malmaison':25,'nanterre':26,'puteaux':25,'courbevoie':27,
+  'colombes':30,'asnières':28,'paris':22,'paris 12':28,'paris 15':16,'paris 16':20,'joinville':28,'créteil':26,'creteil':26,
+  'nogent-sur-marne':30,'saint-maur':32,'sucy-en-brie':34,'rosny-sous-bois':35,'villeneuve-saint-georges':30,'houilles':33,
+  'croissy-sur-seine':30,'chatou':28,'le vésinet':30,'saint-germain-en-laye':35,'villennes-sur-seine':38,'les mureaux':42
+};
+
+const DEFAULT_MATCHES = [
+  {id:'m1',date:'2026-11-01',opp:'A. BARRALON',oppRank:'30',res:'V',score:'Homologué',coef:1.0,inBase:true,ptsAdded:0},
+  {id:'m2',date:'2026-10-31',opp:'J. ANONYME',oppRank:'15/5',res:'V',score:'Homologué',coef:1.0,inBase:true,ptsAdded:0},
+  {id:'m3',date:'2026-10-31',opp:'F. DE FAUTEREAU',oppRank:'15/5',res:'V',score:'Homologué',coef:1.0,inBase:true,ptsAdded:0},
+  {id:'m4',date:'2026-10-30',opp:'L. HEITZ',oppRank:'30',res:'V',score:'Homologué',coef:1.0,inBase:true,ptsAdded:0},
+  {id:'m5',date:'2026-10-30',opp:'A. HOARAU',oppRank:'30',res:'D',score:'Homologué',coef:1.0,inBase:true,ptsAdded:0}
+];
+
+function defaultState(){
+  return {
+    player:'Leny',rank:'30',city:'Clamart',
+    basePts:272,baseWins:28,baseLosses:19,baseLabel:'Décembre 2026',
+    calcMode:'net',
+    tournois:[],
+    statuses:{}, // id -> 'À étudier' | 'Intéressant' | 'Inscrit' | 'Ignoré'
+    convocs:[],
+    matches:JSON.parse(JSON.stringify(DEFAULT_MATCHES)),
+    lastSyncLabel:'En attente...',
+    newlyAddedCount:0
+  };
+}
+
+let state = loadState();
+let tab = 'home';
+let filterMonth = 'ALL';
+let filterMins = 45;
+let filterCat = 'ALL';
+let filterFormat = 'ALL';
+let filterStatus = 'ALL';
+let convocTab = 'upcoming';
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? Object.assign(defaultState(), JSON.parse(raw)) : defaultState();
+  }catch(e){return defaultState();}
+}
+function save(){localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
+
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._t); window._t = setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+// AUTOMATIC SYNC WITH ./tournois.json UPDATED DAILY BY GITHUB ACTIONS ROBOT
+async function syncRemote(manual=false){
+  try{
+    const resp = await fetch(`./tournois.json?ts=${Date.now()}`, {cache:'no-store'});
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const data = await resp.json();
+    const remoteList = Array.isArray(data.tournois) ? data.tournois : [];
+    const existingIds = new Set(state.tournois.map(t=>t.id));
+    let added = 0;
+
+    // Keep user-imported custom tournaments + merge remote robot tournaments
+    const byId = new Map(state.tournois.map(t=>[t.id, t]));
+    remoteList.forEach(rt=>{
+      if(!existingIds.has(rt.id)){
+        rt.isNew = existingIds.size > 0; // Highlight newly arrived tournaments after first load
+        added++;
+      } else {
+        const prev = byId.get(rt.id);
+        rt.isNew = prev.isNew || false;
+      }
+      byId.set(rt.id, rt);
+    });
+
+    state.tournois = Array.from(byId.values()).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+    state.lastSyncLabel = data.updated_label || new Date().toLocaleDateString('fr-FR');
+    if(added > 0 && existingIds.size > 0) state.newlyAddedCount = added;
+    save();
+    render();
+    if(manual) toast(added > 0 ? `🤖 ${added} nouveau(x) tournoi(s) ajouté(s) !` : '🤖 Robot à jour (aucun nouveau tournoi)');
+    else if(added > 0 && existingIds.size > 0) toast(`🤖 ${added} nouveau(x) tournoi(s) détecté(s) !`);
+  }catch(err){
+    if(manual) toast('Impossible de joindre tournois.json');
+  }
+}
+
+function getStatus(id){return state.statuses[id] || 'À étudier';}
+function setStatus(id, val){state.statuses[id]=val; save(); render(); toast(`Statut : ${val}`);}
+
+function rankIdx(r){return RANKS.indexOf(r);}
+function rawVictoryPts(oppRank, targetRank){
+  const d = rankIdx(oppRank) - rankIdx(targetRank);
+  if(d >= 2) return 120;
+  if(d === 1) return 90;
+  if(d === 0) return 60;
+  if(d === -1) return 30;
+  if(d === -2) return 20;
+  if(d === -3) return 15;
+  return 0;
+}
+function calcMatchPts(oppRank, res, coef, targetRank, mode){
+  if(res !== 'V') return 0;
+  const brute = Math.round(rawVictoryPts(oppRank, targetRank) * (parseFloat(coef)||1));
+  if(mode === 'direct') return brute;
+  const replaced = brute >= 60 ? 20 : (brute >= 30 ? 15 : 0);
+  return Math.max(0, brute - replaced);
+}
+
+function getTotals(){
+  const newMatches = state.matches.filter(m => !m.inBase);
+  const addPts = newMatches.reduce((a,m)=>a+(m.ptsAdded||0), 0);
+  const addW = newMatches.filter(m=>m.res==='V').length;
+  const addL = newMatches.filter(m=>m.res==='D').length;
+  const pts = state.basePts + addPts;
+  const wins = state.baseWins + addW;
+  const losses = state.baseLosses + addL;
+  let curRank = state.rank;
+  let tgt = TARGETS[curRank] || {next:'15/1',pts:360,maintien:340};
+  while(TARGETS[curRank] && pts >= TARGETS[curRank].pts){
+    curRank = TARGETS[curRank].next;
+    tgt = TARGETS[curRank] || {next:'15',pts:390,maintien:360};
+  }
+  const rem = Math.max(0, tgt.pts - pts);
+  const pct = Math.min(100, Math.round((pts / tgt.pts) * 100));
+  return {pts, wins, losses, total:wins+losses, curRank, tgt, rem, pct, addPts};
+}
+
+function fmtDate(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-');
+  const mo = ['jan.','fév.','mar.','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'][parseInt(m,10)-1]||m;
+  return `${parseInt(d,10)} ${mo} ${y}`;
+}
+function fmtMonthLabel(ym){
+  const [y,m] = ym.split('-');
+  const mo = ['Jan.','Fév.','Mar.','Avr.','Mai','Juin','Juil.','Août','Sep.','Oct.','Nov.','Déc.'][parseInt(m,10)-1]||m;
+  return `${mo} ${y}`;
+}
+function mapsUrl(q){return `https://maps.apple.com/?saddr=Clamart,France&daddr=${encodeURIComponent(q+', France')}&dirflg=d`;}
+
+function checkOverlap(t){
+  if(getStatus(t.id) !== 'Inscrit') return null;
+  const others = state.tournois.filter(o => o.id!==t.id && getStatus(o.id)==='Inscrit');
+  for(const o of others){
+    if(t.start <= o.end && t.end >= o.start) return o.name;
+  }
+  return null;
+}
+
+function getDynamicMonths(){
+  const set = new Set(state.tournois.map(t=>t.month).filter(Boolean));
+  return Array.from(set).sort();
+}
+
+function setTab(t){
+  tab = t;
+  if(t === 'tournois' && state.newlyAddedCount > 0){
+    state.newlyAddedCount = 0; save();
+  }
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
+  render();
+  window.scrollTo(0,0);
+}
+
+function render(){
+  const tot = getTotals();
+  document.getElementById('hdr-rank').textContent = `${state.player} • ${tot.curRank}`;
+  document.getElementById('badge-t').textContent = state.tournois.length;
+  const upC = state.convocs.filter(c=>!c.played).length;
+  const bc = document.getElementById('badge-c');
+  bc.textContent = upC; bc.style.display = upC>0?'inline-block':'none';
+
+  const v = document.getElementById('view');
+  if(tab==='home') v.innerHTML = renderHome(tot);
+  else if(tab==='tournois') v.innerHTML = renderTournois();
+  else if(tab==='convocs') v.innerHTML = renderConvocs();
+  else v.innerHTML = renderPalmares(tot);
+}
+
+function renderHome(tot){
+  const months = getDynamicMonths();
+  const nextC = state.convocs.filter(c=>!c.played).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const wr = tot.total ? ((tot.wins/tot.total)*100).toFixed(1) : '0';
+
+  return `
+  <div class="sync-bar ${state.newlyAddedCount>0?'new':''}">
+    <div>
+      <div class="sync-title">${state.newlyAddedCount>0 ? `✨ ${state.newlyAddedCount} nouveau(x) tournoi(s) ajouté(s) !` : `🤖 Robot auto connecté (${state.tournois.length} tournois)`}</div>
+      <div class="sync-sub">Synchro auto chaque matin • Dernière MàJ : ${state.lastSyncLabel}</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="syncRemote(true)">Vérifier</button>
+  </div>
+
+  <div class="hero">
+    <div class="hero-top">
+      <span class="hero-chip">${tot.curRank} → Objectif ${tot.tgt.next}</span>
+      <span class="hero-chip-white">${tot.rem>0 ? `Reste ${tot.rem} pts` : 'Objectif atteint 🎉'}</span>
+    </div>
+    <div class="hero-pts">${tot.pts} <span>/ ${tot.tgt.pts} pts</span></div>
+    <div class="hero-sub">Base Ten'Up ${state.baseLabel} (${state.basePts} pts${tot.addPts>0?` + ${tot.addPts} pts`:''}) • Maintien ${tot.curRank} : ${tot.tgt.maintien} pts</div>
+    <div class="prog-row"><span>${tot.pct} %</span><span>Objectif ${tot.tgt.next}</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${tot.pct}%"></div></div>
+    <div class="hero-foot">
+      <span>15/5 : 305 • 15/4 : 315 • 15/3 : 325</span>
+      <button class="btn-ghost-white" onclick="openBaseModal()">✏️ Base Ten'Up</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">${tot.total}</div><div class="kpi-lbl">Matchs</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:var(--green)">${tot.wins}</div><div class="kpi-lbl">Victoires</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:var(--red)">${tot.losses}</div><div class="kpi-lbl">Défaites</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:var(--blue)">${wr}%</div><div class="kpi-lbl">Ratio V</div></div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title"><span>📅 Prochaine convocation</span><button class="btn btn-green btn-sm" onclick="openConvocModal()">+ Ajouter</button></div>
+    ${nextC ? `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <div>
+          <div style="font-weight:800">${nextC.tournament}</div>
+          <div style="font-size:12px;color:var(--muted)">${fmtDate(nextC.date)} à ${nextC.time||'--:--'} • ${nextC.club}</div>
+          <div style="font-size:12px;margin-top:2px">Adversaire : <b>${nextC.opp||'Non connu'}</b> (${nextC.oppRank||'?'})</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openScoreModal('${nextC.id}')">🎾 Score</button>
+      </div>
+    ` : `<div style="font-size:13px;color:var(--muted)">Aucune convocation enregistrée. Ajoute une convocation pour saisir le score et calculer les points en direct.</div>`}
+  </div>
+
+  <div class="card">
+    <div class="sec-title"><span>🗓️ Tournois par mois</span><button class="btn btn-soft btn-sm" onclick="filterMonth='ALL';setTab('tournois')">Tout voir</button></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      ${months.slice(0,6).map(m=>{
+        const cnt = state.tournois.filter(t=>t.month===m).length;
+        return `<button class="btn btn-soft" style="flex-direction:column;padding:12px 6px" onclick="filterMonth='${m}';setTab('tournois')">
+          <span style="font-size:18px;color:var(--green)">${cnt}</span><span style="font-size:12px">${fmtMonthLabel(m)}</span>
+        </button>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function renderTournois(){
+  const dynMonths = getDynamicMonths();
+  const months = [{k:'ALL',l:`Tous (${state.tournois.length})`}].concat(
+    dynMonths.map(m=>({k:m, l:`${fmtMonthLabel(m)} (${state.tournois.filter(t=>t.month===m).length})`}))
+  );
+  const list = state.tournois.filter(t=>{
+    if(filterMonth!=='ALL' && t.month!==filterMonth) return false;
+    if((t.mins||0) > filterMins) return false;
+    if(filterCat!=='ALL' && (t.cat||'15/16')!==filterCat) return false;
+    if(filterFormat!=='ALL' && t.format!==filterFormat) return false;
+    if(filterStatus!=='ALL' && getStatus(t.id)!==filterStatus) return false;
+    return true;
+  }).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+
+  return `
+  <div class="sec-title">
+    <span>🏆 Tournois (${list.length} / ${state.tournois.length})</span>
+    <button class="btn btn-primary btn-sm" onclick="openImportModal()">+ Manuel</button>
+  </div>
+  <div class="pills">
+    ${months.map(m=>`<button class="pill ${filterMonth===m.k?'active':''}" onclick="filterMonth='${m.k}';render()">${m.l}</button>`).join('')}
+  </div>
+  <div class="filters">
+    <select onchange="filterMins=Number(this.value);render()">
+      <option value="45" ${filterMins===45?'selected':''}>≤ 45 min Clamart</option>
+      <option value="30" ${filterMins===30?'selected':''}>≤ 30 min</option>
+      <option value="20" ${filterMins===20?'selected':''}>≤ 20 min</option>
+      <option value="99" ${filterMins===99?'selected':''}>Tout rayon</option>
+    </select>
+    <select onchange="filterCat=this.value;render()">
+      <option value="ALL" ${filterCat==='ALL'?'selected':''}>Toutes catégories</option>
+      <option value="15/16" ${filterCat==='15/16'?'selected':''}>15/16 ans</option>
+      <option value="17/18 (surcl.)" ${filterCat==='17/18 (surcl.)'?'selected':''}>17/18 (surcl.)</option>
+      <option value="Senior" ${filterCat==='Senior'?'selected':''}>Senior</option>
+    </select>
+    <select onchange="filterFormat=this.value;render()">
+      <option value="ALL" ${filterFormat==='ALL'?'selected':''}>Tous formats</option>
+      <option value="TMC" ${filterFormat==='TMC'?'selected':''}>TMC ⭐</option>
+      <option value="Open" ${filterFormat==='Open'?'selected':''}>Open</option>
+    </select>
+    <select onchange="filterStatus=this.value;render()">
+      <option value="ALL" ${filterStatus==='ALL'?'selected':''}>Tous statuts</option>
+      <option value="À étudier" ${filterStatus==='À étudier'?'selected':''}>À étudier</option>
+      <option value="Intéressant" ${filterStatus==='Intéressant'?'selected':''}>Intéressant</option>
+      <option value="Inscrit" ${filterStatus==='Inscrit'?'selected':''}>Inscrit</option>
+    </select>
+  </div>
+
+  ${list.length ? list.map(t=>{
+    const st = getStatus(t.id);
+    const ov = checkOverlap(t);
+    const cat = t.cat || '15/16';
+    const catBadge = cat==='15/16' ? '<span class="badge badge-green">15/16 ans</span>' : `<span class="badge badge-purple">${cat}</span>`;
+    return `
+    <div class="t-card">
+      <div class="t-top">
+        <div>
+          <h3 class="t-name">${t.isNew ? '🆕 ' : ''}${t.name}</h3>
+          <div class="t-club">${t.club} • ${t.city} (~${t.mins} min)</div>
+        </div>
+        <select style="font-size:12px;padding:4px 6px;width:auto" onchange="setStatus('${t.id}',this.value)">
+          ${['À étudier','Intéressant','Inscrit','Ignoré'].map(x=>`<option value="${x}" ${st===x?'selected':''}>${x}</option>`).join('')}
+        </select>
+      </div>
+      <div class="badges">
+        <span class="badge badge-blue">📅 ${fmtDate(t.start)} → ${fmtDate(t.end)}</span>
+        ${catBadge}
+        <span class="badge">${t.surface||'Dur'}</span>
+        ${t.format==='TMC'?'<span class="badge badge-tmc">⭐ TMC</span>':''}
+        ${st==='Inscrit'?'<span class="badge badge-green">✓ Inscrit</span>':''}
+      </div>
+      ${t.notes?`<div style="font-size:12px;color:var(--muted)">${t.notes}</div>`:''}
+      ${ov?`<div class="overlap">⚠️ Chevauchement de dates avec : ${ov}</div>`:''}
+      <div class="t-actions">
+        ${t.url?`<a class="btn btn-primary btn-sm" style="text-decoration:none" href="${t.url}" target="_blank">Ten'Up / Fiche</a>`:''}
+        <a class="btn btn-soft btn-sm" style="text-decoration:none" href="${mapsUrl(t.club+' '+t.city)}" target="_blank">🗺️ Plans</a>
+        <button class="btn btn-green btn-sm" onclick="openConvocModal('${t.id}')">📅 Convoc</button>
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty">Aucun tournoi ne correspond à ces filtres.</div>`}`;
+}
+
+function renderConvocs(){
+  const up = state.convocs.filter(c=>!c.played).sort((a,b)=>a.date.localeCompare(b.date));
+  const done = state.convocs.filter(c=>c.played).sort((a,b)=>b.date.localeCompare(a.date));
+  const list = convocTab==='upcoming' ? up : done;
+  return `
+  <div class="sec-title">
+    <span>📅 Convocations</span>
+    <button class="btn btn-green btn-sm" onclick="openConvocModal()">+ Nouvelle</button>
+  </div>
+  <div class="pills">
+    <button class="pill ${convocTab==='upcoming'?'active':''}" onclick="convocTab='upcoming';render()">À venir (${up.length})</button>
+    <button class="pill ${convocTab==='done'?'active':''}" onclick="convocTab='done';render()">Jouées (${done.length})</button>
+  </div>
+  ${list.length ? list.map(c=>`
+    <div class="t-card">
+      <div class="t-top">
+        <div>
+          <h3 class="t-name">${c.tournament}</h3>
+          <div class="t-club">${c.club} • ${fmtDate(c.date)} ${c.time?`à ${c.time}`:''}</div>
+        </div>
+        ${c.played ? `<span class="badge ${c.res==='V'?'badge-green':'badge-red'}">${c.res==='V'?'Victoire':'Défaite'} ${c.score||''}</span>` : `<span class="badge badge-blue">Coef ${c.coef}</span>`}
+      </div>
+      <div class="badges">
+        <span class="badge">Adversaire : ${c.opp||'À définir'} (${c.oppRank||'?'})</span>
+        ${c.surface?`<span class="badge">${c.surface}</span>`:''}
+        ${c.played && c.ptsAdded>0 ? `<span class="badge badge-green">+${c.ptsAdded} pts</span>`:''}
+      </div>
+      <div class="t-actions">
+        ${!c.played ? `<button class="btn btn-green btn-sm" onclick="openScoreModal('${c.id}')">🎾 Saisir le score</button>`:''}
+        <a class="btn btn-soft btn-sm" style="text-decoration:none" href="${mapsUrl(c.club)}" target="_blank">🗺️ Plans</a>
+        <button class="btn btn-red btn-sm" onclick="delConvoc('${c.id}')">Supprimer</button>
+      </div>
+    </div>
+  `).join('') : `<div class="empty">${convocTab==='upcoming'?'Aucune convocation à venir.':'Aucun match joué.'}</div>`}`;
+}
+
+function delConvoc(id){state.convocs=state.convocs.filter(c=>c.id!==id);save();render();toast('Convocation supprimée');}
+
+function renderPalmares(tot){
+  const simRanks = ['15/4','15/5','30'];
+  return `
+  <div class="card">
+    <div class="sec-title"><span>⚡ Simulateur express (Et si Leny gagne...)</span></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
+      Mode : <b>${state.calcMode==='net'?'Réaliste FFT (gain net)':'Addition directe (brut)'}</b>
+      <button class="btn btn-soft btn-sm" style="margin-left:6px" onclick="state.calcMode=state.calcMode==='net'?'direct':'net';save();render()">Changer</button>
+    </div>
+    <div class="sim-grid">
+      ${simRanks.map(r=>{
+        const g = calcMatchPts(r,'V',1.0,tot.tgt.next,state.calcMode);
+        const remAfter = Math.max(0, tot.tgt.pts - (tot.pts + g));
+        return `<div style="background:var(--bg);border-radius:12px;padding:8px;text-align:center">
+          <div style="font-weight:800">vs ${r}</div>
+          <div style="color:var(--green);font-weight:800;font-size:15px">+${g} pts</div>
+          <div style="font-size:11px;color:var(--muted)">${remAfter===0?`Passe ${tot.tgt.next}!`:`Reste ${remAfter}`}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">
+      <span>🎾 Matchs (${state.matches.length} récents)</span>
+      <button class="btn btn-green btn-sm" onclick="openMatchModal()">+ Match</button>
+    </div>
+    ${state.matches.map(m=>`
+      <div class="match-row">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="res-dot ${m.res==='V'?'res-v':'res-d'}">${m.res}</div>
+          <div>
+            <div style="font-weight:800">${m.opp} <span class="badge">${m.oppRank}</span></div>
+            <div style="font-size:12px;color:var(--muted)">${fmtDate(m.date)} • ${m.score||''} ${m.inBase?'• Inclus dans les '+state.basePts+' pts':''}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          ${!m.inBase && m.ptsAdded>0 ? `<div style="color:var(--green);font-weight:800;font-size:13px">+${m.ptsAdded} pts</div>`:''}
+          ${!m.inBase ? `<button class="btn btn-soft btn-sm" onclick="delMatch('${m.id}')">✕</button>`:''}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+function delMatch(id){state.matches=state.matches.filter(m=>m.id!==id);save();render();toast('Match supprimé');}
+
+function openModal(html){document.getElementById('modal-body').innerHTML=html;document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+function openBaseModal(){
+  openModal(`
+    <h3 style="margin:0 0 12px">✏️ Actualiser la base Ten'Up</h3>
+    <div class="row2">
+      <div class="field"><label>Points Ten'Up actuels</label><input type="number" inputmode="numeric" id="b-pts" value="${state.basePts}"></div>
+      <div class="field"><label>Classement actuel</label><select id="b-rank">${['30','15/5','15/4','15/3','15/2'].map(r=>`<option ${state.rank===r?'selected':''}>${r}</option>`).join('')}</select></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Victoires</label><input type="number" inputmode="numeric" id="b-w" value="${state.baseWins}"></div>
+      <div class="field"><label>Défaites</label><input type="number" inputmode="numeric" id="b-l" value="${state.baseLosses}"></div>
+    </div>
+    <button class="btn btn-green btn-block" onclick="saveBase()">Enregistrer</button>
+  `);
+}
+function saveBase(){
+  state.basePts=parseInt(document.getElementById('b-pts').value,10)||0;
+  state.rank=document.getElementById('b-rank').value;
+  state.baseWins=parseInt(document.getElementById('b-w').value,10)||0;
+  state.baseLosses=parseInt(document.getElementById('b-l').value,10)||0;
+  save();closeModal();render();toast('Base Ten\'Up mise à jour');
+}
+
+function openConvocModal(tid){
+  const t = tid ? state.tournois.find(x=>x.id===tid) : null;
+  openModal(`
+    <h3 style="margin:0 0 12px">📅 Nouvelle convocation</h3>
+    <div class="field"><label>Tournoi</label><input id="c-t" value="${t?t.name:''}" placeholder="Ex: TC Clamart GPJ92"></div>
+    <div class="field"><label>Club / Lieu</label><input id="c-club" value="${t?t.club+' '+t.city:''}" placeholder="Ex: TC Clamart"></div>
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="c-date" value="${t?t.start:'2026-12-20'}"></div>
+      <div class="field"><label>Heure</label><input type="time" id="c-time" value="14:00"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Adversaire</label><input id="c-opp" placeholder="Nom adversaire"></div>
+      <div class="field"><label>Classement adv.</label><select id="c-rank">${['15/3','15/4','15/5','30','30/1','30/2','30/3','NC'].map(r=>`<option ${r==='15/5'?'selected':''}>${r}</option>`).join('')}</select></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Coef FFT</label><select id="c-coef"><option value="1.0" ${!t||t.format!=='TMC'?'selected':''}>Normal (1.0)</option><option value="0.8" ${t&&t.format==='TMC'?'selected':''}>TMC (0.8)</option><option value="0.6">Court (0.6)</option></select></div>
+      <div class="field"><label>Surface</label><input id="c-surf" value="${t?t.surface:'Dur / Résine'}"></div>
+    </div>
+    <button class="btn btn-green btn-block" onclick="saveConvoc()">Enregistrer</button>
+  `);
+}
+function saveConvoc(){
+  state.convocs.push({
+    id:'c_'+Date.now(),tournament:document.getElementById('c-t').value.trim()||'Tournoi',
+    club:document.getElementById('c-club').value.trim()||'Clamart',date:document.getElementById('c-date').value,
+    time:document.getElementById('c-time').value,opp:document.getElementById('c-opp').value.trim()||'Adversaire',
+    oppRank:document.getElementById('c-rank').value,coef:parseFloat(document.getElementById('c-coef').value)||1.0,
+    surface:document.getElementById('c-surf').value.trim(),played:false
+  });
+  save();closeModal();setTab('convocs');toast('Convocation ajoutée');
+}
+
+function openScoreModal(cid){
+  const c=state.convocs.find(x=>x.id===cid); if(!c)return;
+  openModal(`
+    <h3 style="margin:0 0 10px">🎾 Saisir le score</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${c.tournament} • vs ${c.opp} (${c.oppRank})</div>
+    <div class="row2">
+      <div class="field"><label>Résultat</label><select id="s-res" onchange="previewPts('${cid}')"><option value="V">Victoire</option><option value="D">Défaite</option></select></div>
+      <div class="field"><label>Classement adv.</label><select id="s-rank" onchange="previewPts('${cid}')">${['15/3','15/4','15/5','30','30/1','30/2','30/3','NC'].map(r=>`<option ${r===c.oppRank?'selected':''}>${r}</option>`).join('')}</select></div>
+    </div>
+    <div class="field"><label>Score</label><input id="s-score" placeholder="Ex: 6/4 6/3"></div>
+    <div id="s-prev" style="background:var(--green-soft);color:var(--green-dark);padding:10px;border-radius:10px;font-weight:700;margin-bottom:12px;font-size:13px"></div>
+    <button class="btn btn-green btn-block" onclick="saveScore('${cid}')">Valider & calculer</button>
+  `);
+  previewPts(cid);
+}
+function previewPts(cid){
+  const c=state.convocs.find(x=>x.id===cid), tot=getTotals(), res=document.getElementById('s-res').value, r=document.getElementById('s-rank').value;
+  const g=calcMatchPts(r,res,c.coef,tot.tgt.next,state.calcMode), np=tot.pts+g, rem=Math.max(0,tot.tgt.pts-np);
+  document.getElementById('s-prev').textContent = res==='V' ? `Gain : +${g} pts → Total ${np}/${tot.tgt.pts} (${rem===0?`PASSAGE ${tot.tgt.next} 🎉`:`reste ${rem} pts`})` : `Défaite : +0 pt → Total ${tot.pts}/${tot.tgt.pts}`;
+}
+function saveScore(cid){
+  const c=state.convocs.find(x=>x.id===cid), before=getTotals().curRank, tot=getTotals();
+  const res=document.getElementById('s-res').value, oppRank=document.getElementById('s-rank').value, score=document.getElementById('s-score').value.trim()||(res==='V'?'Victoire':'Défaite');
+  const g=calcMatchPts(oppRank,res,c.coef,tot.tgt.next,state.calcMode);
+  c.played=true;c.res=res;c.oppRank=oppRank;c.score=score;c.ptsAdded=g;
+  state.matches.unshift({id:'m_'+Date.now(),date:c.date,opp:c.opp,oppRank,res,score,coef:c.coef,inBase:false,ptsAdded:g});
+  save();closeModal();render();
+  const after=getTotals().curRank;
+  if(after!==before) celebrate(after); else toast(res==='V'?`Victoire (+${g} pts)`:'Match enregistré');
+}
+
+function openMatchModal(){
+  openModal(`
+    <h3 style="margin:0 0 12px">🎾 Ajouter un match</h3>
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="m-date" value="2026-11-20"></div>
+      <div class="field"><label>Résultat</label><select id="m-res"><option value="V">Victoire</option><option value="D">Défaite</option></select></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Adversaire</label><input id="m-opp" placeholder="Nom"></div>
+      <div class="field"><label>Classement</label><select id="m-rank">${['15/3','15/4','15/5','30','30/1','30/2','30/3','NC'].map(r=>`<option ${r==='15/5'?'selected':''}>${r}</option>`).join('')}</select></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Score</label><input id="m-score" placeholder="6/4 6/2"></div>
+      <div class="field"><label>Coef FFT</label><select id="m-coef"><option value="1.0">1.0 (Normal)</option><option value="0.8">0.8 (TMC)</option></select></div>
+    </div>
+    <button class="btn btn-green btn-block" onclick="saveMatch()">Ajouter</button>
+  `);
+}
+function saveMatch(){
+  const before=getTotals().curRank, tot=getTotals(), res=document.getElementById('m-res').value, oppRank=document.getElementById('m-rank').value, coef=parseFloat(document.getElementById('m-coef').value)||1.0;
+  const g=calcMatchPts(oppRank,res,coef,tot.tgt.next,state.calcMode);
+  state.matches.unshift({id:'m_'+Date.now(),date:document.getElementById('m-date').value,opp:document.getElementById('m-opp').value.trim()||'Adversaire',oppRank,res,score:document.getElementById('m-score').value.trim(),coef,inBase:false,ptsAdded:g});
+  save();closeModal();render();
+  const after=getTotals().curRank;
+  if(after!==before) celebrate(after); else toast(`Match ajouté (${res==='V'?'+'+g+' pts':'0 pt'})`);
+}
+
+function openImportModal(){
+  openModal(`
+    <h3 style="margin:0 0 10px">➕ Ajouter manuellement un tournoi</h3>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 10px">Le robot synchronise automatiquement chaque matin. Tu peux aussi ajouter un tournoi à la main :<br><b>Nom | Club | Ville | JJ/MM/AAAA - JJ/MM/AAAA | Surface | Lien</b></p>
+    <div class="field"><textarea id="imp-txt" rows="4" placeholder="Tournoi | Club | Ville | 10/01/2027 - 20/01/2027 | Résine | https://tenup.fft.fr/..."></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="importLines()">Ajouter</button>
+  `);
+}
+function parseFrDate(s){const m=(s||'').match(/(\d{2})\/(\d{2})\/(\d{4})/);return m?`${m[3]}-${m[2]}-${m[1]}`:'2027-01-01';}
+function guessMins(city){const k=(city||'').toLowerCase().trim();for(const [c,v] of Object.entries(CITIES_MIN)){if(k.includes(c))return v;}return 25;}
+function importLines(){
+  const txt=document.getElementById('imp-txt').value.trim(); if(!txt)return toast('Colle une ligne');
+  let added=0;
+  txt.split('\n').map(l=>l.trim()).filter(Boolean).forEach(line=>{
+    const p=line.split('|').map(x=>x.trim()); if(p.length<3)return;
+    const name=p[0],club=p[1],city=p[2],dates=(p[3]||'').split('-').map(x=>x.trim());
+    const start=parseFrDate(dates[0]),end=parseFrDate(dates[1]||dates[0]);
+    state.tournois.push({id:'man_'+Date.now()+Math.random(),name,club,city,mins:guessMins(city),start,end,month:start.slice(0,7),cat:/senior/i.test(name)?'Senior':(/17\/18/i.test(name)?'17/18 (surcl.)':'15/16'),surface:p[4]||'Dur / Résine',format:/tmc/i.test(name)?'TMC':'Open',url:p[5]||'https://tenup.fft.fr/recherche/tournois',notes:'Ajout manuel'});
+    added++;
+  });
+  save();closeModal();render();toast(`${added} tournoi(s) ajouté(s)`);
+}
+
+function openSettingsModal(){
+  openModal(`
+    <h3 style="margin:0 0 12px">⚙️ Paramètres & Sauvegarde</h3>
+    <button class="btn btn-primary btn-block" style="margin-bottom:10px" onclick="closeModal();syncRemote(true)">🤖 Forcer la synchro avec le robot</button>
+    <div class="field"><label>Sauvegarde JSON</label><button class="btn btn-soft btn-block" onclick="copyBackup()">📋 Copier ma sauvegarde</button></div>
+    <div class="field"><label>Restaurer JSON</label><textarea id="restore-json" rows="3" placeholder="Colle ton JSON..."></textarea><button class="btn btn-soft btn-block" style="margin-top:6px" onclick="restoreBackup()">Restaurer</button></div>
+    <button class="btn btn-red btn-block" style="margin-top:8px" onclick="if(confirm('Réinitialiser les données locales ?')){state=defaultState();save();closeModal();syncRemote(true);}">Réinitialiser</button>
+  `);
+}
+function copyBackup(){navigator.clipboard.writeText(JSON.stringify(state)).then(()=>toast('Sauvegarde copiée')).catch(()=>toast('Erreur copie'));}
+function restoreBackup(){try{state=JSON.parse(document.getElementById('restore-json').value);save();closeModal();render();toast('Restauré !');}catch(e){toast('JSON invalide');}}
+
+function celebrate(newRank){
+  toast(`🏆 BRAVO ! Leny passe ${newRank} !`);
+  const box=document.getElementById('confetti'); box.innerHTML='';
+  for(let i=0;i<36;i++){
+    const d=document.createElement('div');
+    d.style.cssText=`position:absolute;top:-10px;left:${Math.random()*100}%;width:9px;height:9px;background:${['#15803D','#FACC15','#007AFF','#EF4444'][i%4]};border-radius:2px;transition:transform 2.2s ease,opacity 2.2s;`;
+    box.appendChild(d);
+    setTimeout(()=>{d.style.transform=`translateY(${window.innerHeight+40}px) rotate(${Math.random()*720}deg)`;d.style.opacity='0';},20);
+  }
+  setTimeout(()=>{box.innerHTML='';},2400);
+}
+
+render();
+syncRemote(false);
+</script>
+</body>
+</html>

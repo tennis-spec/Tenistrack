@@ -1,0 +1,15 @@
+{
+  "name": "TennisTrack 15/16 — Leny",
+  "short_name": "TennisTrack",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F2F2F7",
+  "theme_color": "#15803D",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
