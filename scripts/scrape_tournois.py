@@ -264,11 +264,4 @@ def main():
     data["tournois"] = existing
 
     with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-    print(f"[OK] Scan terminé : {len(added)} nouveau(x) tournoi(s) ajouté(s). Total : {len(existing)}.")
-    send_ntfy(added)
-
-
-if __name__ == "__main__":
-    main()
+        json.dump(data, f, ensure_ascii=False, indent=
