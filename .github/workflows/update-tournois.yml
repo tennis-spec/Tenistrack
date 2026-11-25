@@ -24,7 +24,7 @@ jobs:
       - name: Lancer le script
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: python scrape_tournois.py
+        run: python scripts/scrape_tournois.py
 
       - name: Enregistrer les changements
         run: |
